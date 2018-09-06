@@ -59,7 +59,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
                 .logoutUrl("api/v1/logout")
-                .permitAll(true)
+                .permitAll(true);
 //                .logoutSuccessHandler(logoutHandler()); add the hander later
 
     }

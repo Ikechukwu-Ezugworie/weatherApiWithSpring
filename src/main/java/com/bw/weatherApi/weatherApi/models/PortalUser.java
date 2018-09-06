@@ -1,8 +1,17 @@
+/**
+
+    Author: Oluwatobi Adenekan
+    email:  tadenekan@byteworks.com.ng
+    organisation: Byteworks Technology solution
+
+**/
 package com.bw.weatherApi.weatherApi.models;
 
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @Entity
@@ -24,6 +33,13 @@ public class PortalUser {
     @Column(nullable = false)
     private  Timestamp dateUpdated;
 
+   @ManyToMany
+//   @JoinTable(name = "portalUser_city",
+//   joinColumns = {@JoinColumn(name = "portalUserId")},
+//           inverseJoinColumns = {@JoinColumn(name = "city_id")}
+//   ) // to define the join tables
+    private Set<City> cities = new HashSet<>();
+
 
     public PortalUser() {
     }
@@ -35,6 +51,14 @@ public class PortalUser {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Set<City> getCities() {
+        return cities;
+    }
+
+    public void setCities(Set<City> cities) {
+        this.cities = cities;
     }
 
     public String getUsername() {

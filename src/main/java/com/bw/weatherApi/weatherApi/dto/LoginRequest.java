@@ -1,3 +1,10 @@
+/**
+
+    Author: Oluwatobi Adenekan
+    email:  tadenekan@byteworks.com.ng
+    organisation: Byteworks Technology solution
+
+**/
 package com.bw.weatherApi.weatherApi.dto;
 
 public class LoginRequest {

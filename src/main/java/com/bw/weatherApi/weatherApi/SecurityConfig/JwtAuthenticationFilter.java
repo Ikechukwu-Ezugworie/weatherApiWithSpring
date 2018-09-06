@@ -1,3 +1,10 @@
+/**
+
+    Author: Oluwatobi Adenekan
+    email:  tadenekan@byteworks.com.ng
+    organisation: Byteworks Technology solution
+
+**/
 package com.bw.weatherApi.weatherApi.SecurityConfig;
 
 import com.bw.weatherApi.weatherApi.dto.LoginRequest;
@@ -78,7 +85,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
 //           response.sendError(HttpServletResponse.SC_UNAUTHORIZED, failed.getMessage());
-        request.getSession().setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, failed.getLocalizedMessage());
+        super.unsuccessfulAuthentication(request,response,failed);
+//        request.getSession().setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, failed.getLocalizedMessage());
 
 
     }
