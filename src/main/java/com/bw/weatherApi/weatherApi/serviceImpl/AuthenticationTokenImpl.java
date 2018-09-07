@@ -79,7 +79,7 @@ public class AuthenticationTokenImpl implements AuthenticationTokenService {
 
         if (request.getRequestURI().contains("api/v1/login")){
             try {
-                response.getWriter().write(new Gson().toJson(new ApiResponse<String>(String .valueOf(HttpServletResponse.SC_OK),"Succesffult logged in",loginResponseDto.getToken())));
+                response.getWriter().write(loginResponseDto.getToken());
             }catch (Exception ex){
                 ex.printStackTrace();
                 throw new AuthenticationServiceException("Error while trying to return a response");

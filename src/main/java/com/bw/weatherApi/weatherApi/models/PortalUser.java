@@ -8,6 +8,9 @@
 package com.bw.weatherApi.weatherApi.models;
 
 
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.HashSet;
@@ -33,11 +36,14 @@ public class PortalUser {
     @Column(nullable = false)
     private  Timestamp dateUpdated;
 
-   @ManyToMany
+
 //   @JoinTable(name = "portalUser_city",
 //   joinColumns = {@JoinColumn(name = "portalUserId")},
 //           inverseJoinColumns = {@JoinColumn(name = "city_id")}
 //   ) // to define the join tables
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @LazyCollection(value = LazyCollectionOption.TRUE )
     private Set<City> cities = new HashSet<>();
 
 

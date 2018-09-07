@@ -21,6 +21,8 @@ public class City {
     @Column(nullable = false)
     private Timestamp dateUpdated;
 
+
+
     public City() {
     }
 

@@ -15,4 +15,6 @@ import org.springframework.stereotype.Service;
 public interface AccessService {
 
     PortalUser save(SignUpRequestDto signUpRequestDto);
+
+    PortalUser getPrincipal();
 }
