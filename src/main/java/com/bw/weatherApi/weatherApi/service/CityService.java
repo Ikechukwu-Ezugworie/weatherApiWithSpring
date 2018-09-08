@@ -16,4 +16,6 @@ public interface CityService{
     List<CityDto> toListDto(List<City> cities);
     void cityUpdate(City city);
     void removeCities();
+    CityDto toDto(City city);
+    List<CityDto> findAllUsersCity();
 }

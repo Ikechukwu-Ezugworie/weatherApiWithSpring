@@ -16,4 +16,6 @@ import java.util.Optional;
 @Repository
 public interface  PortalUserDao extends JpaRepository<PortalUser, Long> {
     Optional<PortalUser> findByUsername(String username);
+    Optional<PortalUser> findById(Long id);
+
 }
