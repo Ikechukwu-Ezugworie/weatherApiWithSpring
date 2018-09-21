@@ -54,7 +54,7 @@ public class ApxusWeatherChecker {
 
                 if (Math.round(currentTemperature) < 20){
                     try {
-                        mailService.sendSimpleMail("oluwatobi.adenekan@student.uniosun.edu.ng","Current Weather in " + simpleUser.getCity().getName(),builder.toString());
+                        mailService.sendSimpleMail(simpleUser.getEmail(),"Current Weather in " + simpleUser.getCity().getName(),builder.toString());
 
                     }catch (Exception ex){
                         ex.printStackTrace();
