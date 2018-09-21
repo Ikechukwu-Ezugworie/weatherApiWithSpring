@@ -10,26 +10,40 @@ package com.bw.weatherApi.weatherApi.serviceImpl;
 
 
 import com.bw.weatherApi.weatherApi.Exceptions.CityNotFoundException;
+import com.bw.weatherApi.weatherApi.Exceptions.CustomException;
 import com.bw.weatherApi.weatherApi.dao.CityDao;
 import com.bw.weatherApi.weatherApi.dao.PortalUserDao;
 import com.bw.weatherApi.weatherApi.dto.AddCityRequestDto;
 import com.bw.weatherApi.weatherApi.dto.CityDto;
+import com.bw.weatherApi.weatherApi.dto.WeatherResponseDto;
 import com.bw.weatherApi.weatherApi.models.City;
 import com.bw.weatherApi.weatherApi.models.PortalUser;
 import com.bw.weatherApi.weatherApi.service.AccessService;
 import com.bw.weatherApi.weatherApi.service.CityService;
+import com.bw.weatherApi.weatherApi.utils.WeatherApiUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import javassist.bytecode.stackmap.BasicBlock;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ResourceUtils;
+import org.springframework.web.util.UriBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.*;
@@ -44,6 +58,9 @@ public class CityServiceImpl implements CityService {
 
     @Autowired
     PortalUserDao portalUserDao;
+
+    @Autowired
+    private Environment env;
 
 
     Logger logger = LoggerFactory.getLogger(CityServiceImpl.class);
@@ -92,9 +109,14 @@ public class CityServiceImpl implements CityService {
             cities.add(cityChecker.get());
         }
 
-        removeCities(); // remove all the existing cities before updating.
-        cities.forEach(this::cityUpdate);
+//        removeCities(); // remove all the existing cities before updating.
+//        cities.forEach(this::cityUpdate);
 
+        cities.forEach(city -> {
+            if(!userHasCity(city.getId())){
+                cityUpdate(city);
+            }
+        });
         return true;
     }
 
@@ -115,7 +137,7 @@ public class CityServiceImpl implements CityService {
         PortalUser portalUser = accessService.getPrincipal();
         Set<City> cities = portalUser.getCities();
         cities.forEach(city -> cityIds.add(city.getId()));
-        return cityDao.findByIdIn(cityIds);
+        return cityDao.findByIdInOrderByNameAsc(cityIds);
 
     }
 
@@ -136,10 +158,10 @@ public class CityServiceImpl implements CityService {
         return cityDto;
     }
 
-
-
-
-
+    @Override
+    public List<City> getAllCities() {
+        return cityDao.findAll(new Sort(Sort.Direction.ASC,"name"));
+    }
 
 
     /**
@@ -190,5 +212,65 @@ public class CityServiceImpl implements CityService {
     }
 
 
+
+    @Override
+    @Transactional
+    public Boolean removeCity(Long cityId){
+        Optional<City> cityChecker = cityDao.findById(cityId);
+        if (!cityChecker.isPresent()){
+            throw new CityNotFoundException("City with id does not exist",cityId,HttpStatus.CONFLICT);
+        }
+
+
+        Boolean isExist = userHasCity(cityId);
+
+        if(!isExist){
+            throw new CityNotFoundException("City with id does not exist for this exist for this user",cityId,HttpStatus.CONFLICT);
+        }
+
+        City foundCity = cityChecker.get();
+        PortalUser portalUser =  accessService.getPrincipal();
+        portalUser.getCities().remove(foundCity);
+        portalUserDao.save(portalUser);
+        return true;
+    }
+
+    public boolean userHasCity(Long cityId){
+
+        List<City> cities = getAllUserCities();
+
+       return cities.stream().anyMatch(city -> String.valueOf(city.getId()).equals(String.valueOf(cityId)));
+    }
+
+
+    @Override
+    public WeatherResponseDto fetchWeatherFromApi(String city){
+        String scheme = "http";
+        String host= env.getProperty("application.weatherApiHost");
+        String key = env.getProperty("application.weatherApikey");
+        String response = null;
+        WeatherResponseDto weatherResponseDto = null;
+
+        UriBuilder uriBuilder = UriComponentsBuilder.newInstance();
+
+
+
+        URI uri = uriBuilder.host(host).scheme(scheme)
+                .queryParam("Key",key).pathSegment("v1","current.json")
+                .queryParam("q",city).build();
+        try {
+            logger.info(uri.toURL().toString());
+            response = WeatherApiUtils.makeGetRequest(uri.toURL());
+            weatherResponseDto = new Gson().fromJson(response,WeatherResponseDto.class);
+            logger.info(weatherResponseDto.getCurrent().toString());
+        }catch (IOException ex){
+            ex.printStackTrace();
+            throw new CustomException(ex.getMessage(),HttpStatus.BAD_REQUEST);
+
+        }
+
+        return weatherResponseDto;
+
+    }
 
 }

@@ -11,7 +11,7 @@ import com.bw.weatherApi.weatherApi.models.PortalUser;
 
 public class LoginResponseDto {
     private String token;
-    private PortalUser loggedInUser;
+    private PortalUserDto loggedInUser;
 
     public String getToken() {
         return token;
@@ -21,11 +21,11 @@ public class LoginResponseDto {
         this.token = token;
     }
 
-    public PortalUser getLoggedInUser() {
+    public PortalUserDto getLoggedInUser() {
         return loggedInUser;
     }
 
-    public void setLoggedInUser(PortalUser loggedInUser) {
+    public void setLoggedInUser(PortalUserDto loggedInUser) {
         this.loggedInUser = loggedInUser;
     }
 }

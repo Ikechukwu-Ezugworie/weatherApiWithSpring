@@ -5,9 +5,11 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@ComponentScan("com.bw.weatherApi.weatherApi")
+@ComponentScan(basePackages = "com.bw.weatherApi.weatherApi")
+@EnableScheduling
 //@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 public class WeatherApiApplication {
 

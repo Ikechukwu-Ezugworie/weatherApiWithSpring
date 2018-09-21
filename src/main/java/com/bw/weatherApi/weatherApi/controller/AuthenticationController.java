@@ -7,7 +7,9 @@
 **/
 package com.bw.weatherApi.weatherApi.controller;
 
+import com.bw.weatherApi.weatherApi.Exceptions.CustomException;
 import com.bw.weatherApi.weatherApi.dao.PortalUserDao;
+import com.bw.weatherApi.weatherApi.dto.PortalUserDto;
 import com.bw.weatherApi.weatherApi.dto.SignUpRequestDto;
 import com.bw.weatherApi.weatherApi.models.PortalUser;
 import com.bw.weatherApi.weatherApi.service.AccessService;
@@ -20,13 +22,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Optional;
 
 
 @RestController
-public class AuthenticationController extends BaseController {
+@RequestMapping("/api/v1/")
+public class AuthenticationController /*extends BaseController*/ {
     Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     @Autowired
@@ -37,8 +41,18 @@ public class AuthenticationController extends BaseController {
 
     @PostMapping("signup")
     public ResponseEntity<?> signUp(@RequestBody  SignUpRequestDto signUpRequestDto){
-        PortalUser response = accessService.save(signUpRequestDto);
-        return ResponseEntity.ok("Success");
+
+        try{
+            PortalUser portalUser = accessService.save(signUpRequestDto);
+            PortalUserDto portalUserDto = accessService.toDto(portalUser);
+
+            return ResponseEntity.ok(new ApiResponse<>("200", "successfully created new user", portalUserDto));
+        }catch (CustomException ex){
+            ex.printStackTrace();
+            return ResponseEntity.ok(new ApiResponse<>("409", ex.getMessage(), null));
+        }
+
+
 
     }
 }

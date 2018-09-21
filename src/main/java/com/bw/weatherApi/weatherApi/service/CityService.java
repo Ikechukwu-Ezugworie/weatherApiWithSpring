@@ -2,6 +2,7 @@ package com.bw.weatherApi.weatherApi.service;
 
 import com.bw.weatherApi.weatherApi.dto.AddCityRequestDto;
 import com.bw.weatherApi.weatherApi.dto.CityDto;
+import com.bw.weatherApi.weatherApi.dto.WeatherResponseDto;
 import com.bw.weatherApi.weatherApi.models.City;
 import org.springframework.stereotype.Service;
 
@@ -17,5 +18,8 @@ public interface CityService{
     void cityUpdate(City city);
     void removeCities();
     CityDto toDto(City city);
-    List<CityDto> findAllUsersCity();
+    List<City> getAllCities();
+    Boolean removeCity(Long cityId);
+    WeatherResponseDto fetchWeatherFromApi(String city);
+
 }

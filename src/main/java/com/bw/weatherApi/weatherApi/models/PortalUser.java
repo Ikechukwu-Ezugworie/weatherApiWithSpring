@@ -32,9 +32,19 @@ public class PortalUser {
     @Column(nullable = false)
     private String authKey;
     @Column(nullable = false)
+    private String firstName;
+    @Column(nullable = false)
+    private String lastName;
     private Timestamp dateCreated;
     @Column(nullable = false)
     private  Timestamp dateUpdated;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    private City selectedSityToEmail;
+
+
+
+
 
 
 //   @JoinTable(name = "portalUser_city",
@@ -45,8 +55,6 @@ public class PortalUser {
     @ManyToMany(fetch = FetchType.LAZY)
     @LazyCollection(value = LazyCollectionOption.TRUE )
     private Set<City> cities = new HashSet<>();
-
-
     public PortalUser() {
     }
 
@@ -114,4 +122,22 @@ public class PortalUser {
     public void setDateUpdated(Timestamp dateUpdated) {
         this.dateUpdated = dateUpdated;
     }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+
 }

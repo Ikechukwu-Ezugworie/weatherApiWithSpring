@@ -8,7 +8,7 @@
 package com.bw.weatherApi.weatherApi.SecurityConfig;
 
 import com.bw.weatherApi.weatherApi.dto.LoginRequest;
-import com.bw.weatherApi.weatherApi.models.PortalUser;
+import com.bw.weatherApi.weatherApi.service.AccessService;
 import com.bw.weatherApi.weatherApi.service.AuthenticationTokenService;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
@@ -16,13 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.AuthenticationException;;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
+
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -42,6 +39,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Autowired
     public AuthenticationTokenService authenticationTokenService;
+
+    @Autowired
+    AccessService accessService;
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
         if(authenticationManager==null){
@@ -76,7 +76,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         User principal = (User) authResult.getPrincipal();
-        authenticationTokenService.sendToken(principal, response);
+        authenticationTokenService.sendToken(principal, response,request);
         response.addHeader( "Access-Control-Allow-Origin", "*" );
         response.addHeader( "Access-Control-Allow-Methods", "POST" );
         response.addHeader( "Access-Control-Max-Age", "100" );
@@ -85,9 +85,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
 //           response.sendError(HttpServletResponse.SC_UNAUTHORIZED, failed.getMessage());
-        super.unsuccessfulAuthentication(request,response,failed);
+        //Add more descriptive message
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                "Authentication Failed");
 //        request.getSession().setAttribute(WebAttributes.AUTHENTICATION_EXCEPTION, failed.getLocalizedMessage());
-
-
     }
 }

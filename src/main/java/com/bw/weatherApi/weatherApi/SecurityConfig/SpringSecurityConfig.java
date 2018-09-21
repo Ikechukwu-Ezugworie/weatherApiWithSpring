@@ -59,6 +59,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout()
                 .logoutUrl("api/v1/logout")
+//                .addLogoutHandler()
                 .permitAll(true);
 //                .logoutSuccessHandler(logoutHandler()); add the hander later
 
@@ -88,9 +89,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
             jwtAuthenticationFilter.setFilterProcessesUrl("/api/v1/login");
         }catch (Exception ex){
             ex.printStackTrace();
-
         }
-
         return jwtAuthenticationFilter;
     }
 

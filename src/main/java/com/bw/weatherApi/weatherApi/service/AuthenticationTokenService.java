@@ -16,6 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 
 @Service
 public interface AuthenticationTokenService {
-    void sendToken(User user, HttpServletResponse response);
-    PortalUser getPortalUser(HttpServletRequest request);
+    void sendToken(User user, HttpServletResponse response, HttpServletRequest request);
+    PortalUser getPortalUser(HttpServletRequest request, HttpServletResponse response);
 }

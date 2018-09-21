@@ -17,7 +17,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -43,7 +42,7 @@ public class JwtAuthorisationFilter extends BasicAuthenticationFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-        PortalUser portalUser = authenticationTokenService.getPortalUser(request);
+        PortalUser portalUser = authenticationTokenService.getPortalUser(request,response);
         UsernamePasswordAuthenticationToken token = null;
 
         if (portalUser != null){

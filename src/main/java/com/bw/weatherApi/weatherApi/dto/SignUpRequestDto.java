@@ -19,6 +19,12 @@ public class SignUpRequestDto {
     @NotBlank
     private  String email;
 
+    @NotBlank
+    private String firstName;
+
+    @NotBlank
+    private String lastName;
+
     public SignUpRequestDto() {
     }
 
@@ -44,5 +50,21 @@ public class SignUpRequestDto {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }
