@@ -1,5 +1,6 @@
 package com.bw.weatherApi.weatherApi.StartupActions;
 
+import com.bw.weatherApi.weatherApi.service.AccessService;
 import com.bw.weatherApi.weatherApi.service.CityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +17,16 @@ public class CityLoaderStartUpActions {
     @Autowired
     CityService cityService;
 
+    @Autowired
+    AccessService accessService;
+
 
     @PostConstruct
     public void loadCitiesToDb(){
         logger.info("application is starting up");
         cityService.loadCities();
+        accessService.loadRoles();
+
 
     }
 }

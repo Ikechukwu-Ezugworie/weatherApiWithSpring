@@ -15,6 +15,7 @@ public class WeatherResponseDto {
         this.current = current;
     }
 
+
     @Override
     public String toString() {
         return "WeatherResponseDto{" +

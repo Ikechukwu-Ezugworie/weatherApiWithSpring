@@ -10,8 +10,10 @@ package com.bw.weatherApi.weatherApi.serviceImpl;
 import com.bw.weatherApi.weatherApi.Exceptions.CustomException;
 import com.bw.weatherApi.weatherApi.dao.PortalUserDao;
 import com.bw.weatherApi.weatherApi.dto.PortalUserDto;
+import com.bw.weatherApi.weatherApi.dto.RoleDto;
 import com.bw.weatherApi.weatherApi.dto.SignUpRequestDto;
 import com.bw.weatherApi.weatherApi.models.PortalUser;
+import com.bw.weatherApi.weatherApi.models.Role;
 import com.bw.weatherApi.weatherApi.service.AccessService;
 import com.bw.weatherApi.weatherApi.utils.WeatherApiUtils;
 import org.slf4j.Logger;
@@ -19,11 +21,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -40,6 +47,9 @@ public class AccessServiveImpl implements AccessService {
     @Autowired
     PortalUserDao portalUserDao;
 
+    @Autowired
+    EntityManager entityManager;
+
 
 
 
@@ -54,12 +64,14 @@ public class AccessServiveImpl implements AccessService {
             throw new CustomException("user with username already exist", HttpStatus.CONFLICT);
         }
 
+        Role role = entityManager.find(Role.class,Long.valueOf(signUpRequestDto.getRoleId()));
         PortalUser portalUser = new PortalUser();
         portalUser.setUsername(signUpRequestDto.getUsername());
         portalUser.setPassword(bCryptPasswordEncoder.encode(signUpRequestDto.getPassword()));
         portalUser.setAuthKey(String.valueOf(WeatherApiUtils.generateRandomInt(60)));
         portalUser.setFirstName(signUpRequestDto.getFirstName());
         portalUser.setLastName(signUpRequestDto.getLastName());
+        portalUser.setRole(role);
         portalUser.setEmail(signUpRequestDto.getEmail());
         portalUser.setDateCreated(Timestamp.from(Instant.now()));
         portalUser.setDateUpdated(Timestamp.from(Instant.now()));
@@ -89,8 +101,37 @@ public class AccessServiveImpl implements AccessService {
         portalUserDto.setLastName(portalUser.getLastName());
         portalUserDto.setPassword(portalUser.getPassword());
         portalUserDto.setAuthKey(portalUser.getAuthKey());
+        if(portalUser.getRole() != null){ // This will cater for the updated table
+            Role role = entityManager.find(Role.class,portalUser.getRole().getId());
+            portalUserDto.setRoleName(role.getName());
+        }
         portalUserDto.setDateCreated(WeatherApiUtils.timeToString(portalUser.getDateCreated(),"MM/dd/yyyy"));
         portalUserDto.setDateUpdated(WeatherApiUtils.timeToString(portalUser.getDateUpdated(),"MM/dd/yyyy"));
         return portalUserDto;
 
-    }}
+    }
+
+    @Transactional
+    public void loadRoles(){
+        RoleDto[] roles  = RoleDto.values();
+
+        for (RoleDto role : roles) {
+            String roleName = role.name();
+            logger.info("role is " + roleName);
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Role> cq = criteriaBuilder.createQuery(Role.class);
+            Root<Role> roleRoot = cq.from(Role.class);
+
+            cq.select(roleRoot).where(criteriaBuilder.equal(roleRoot.get("name"),roleName));
+            Boolean isEmpty = entityManager.createQuery(cq).getResultList().isEmpty();
+            if(isEmpty){
+                Role newRole = new Role();
+                newRole.setName(roleName);
+                logger.info("Creating a new role with " + roleName);
+                entityManager.persist(newRole);
+            }
+        }
+
+    }
+
+}

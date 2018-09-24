@@ -2,7 +2,7 @@
 
     Author: Oluwatobi Adenekan
     email:  tadenekan@byteworks.com.ng
-    organisation: Byteworks Technology solution
+    date:    24/08/2018
 
 **/
 package com.bw.weatherApi.weatherApi.serviceImpl;
