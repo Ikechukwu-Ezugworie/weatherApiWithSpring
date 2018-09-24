@@ -23,3 +23,9 @@
 /dist/
 /nbdist/
 /.nb-gradle
+
+src/main/java/com/bw/weatherApi/weatherApi/constraints/EmailCollectionValidator\.java
+
+src/main/java/com/bw/weatherApi/weatherApi/constraints/EmailConstraints\.java
+
+src/main/java/com/bw/weatherApi/weatherApi/EmailConstraints\.java
