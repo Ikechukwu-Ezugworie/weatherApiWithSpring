@@ -3,8 +3,9 @@ package com.bw.weatherApi.weatherApi.controller;
 
 import com.bw.weatherApi.weatherApi.Exceptions.CustomException;
 import com.bw.weatherApi.weatherApi.dto.SimpleUserDto;
+import com.bw.weatherApi.weatherApi.models.SimpleUser;
 import com.bw.weatherApi.weatherApi.service.SimpleUserService;
-import com.bw.weatherApi.weatherApi.urils.ApiResponse;
+import com.bw.weatherApi.weatherApi.dto.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-public class UserAdminController extends BaseController {
+public class SimpleUserController extends BaseController {
 
     @Autowired
     SimpleUserService simpleUserService;
@@ -21,8 +22,9 @@ public class UserAdminController extends BaseController {
     public ResponseEntity<?> addUser(@RequestBody SimpleUserDto simpleUserDto){
 
         try {
-            simpleUserService.addUserToPortalUser(simpleUserDto);
-            return ResponseEntity.ok(new ApiResponse<>("200", "Added user"));
+            SimpleUser simpleUser = simpleUserService.addUserToPortalUser(simpleUserDto);
+            SimpleUserDto response = simpleUserService.toDto(simpleUser);
+            return ResponseEntity.ok(new ApiResponse<>("200", "Added user",response));
         }catch (CustomException ex){
             ex.printStackTrace();
             return ResponseEntity.ok(new ApiResponse<>("409", ex.getMessage()));

@@ -13,7 +13,7 @@ import com.bw.weatherApi.weatherApi.models.PortalUser;
 import com.bw.weatherApi.weatherApi.service.AccessService;
 import com.bw.weatherApi.weatherApi.service.AuthenticationTokenService;
 import com.bw.weatherApi.weatherApi.service.JwtService;
-import com.bw.weatherApi.weatherApi.urils.ApiResponse;
+import com.bw.weatherApi.weatherApi.dto.ApiResponse;
 import com.google.gson.Gson;
 import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;

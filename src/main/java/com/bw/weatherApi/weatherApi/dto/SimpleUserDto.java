@@ -1,12 +1,15 @@
 package com.bw.weatherApi.weatherApi.dto;
 
 
+import com.bw.weatherApi.validator.EmailValidation.EmailValidatorConstraits;
+
 public class SimpleUserDto {
 
     private Long id;
 
     private String fullName;
 
+    @EmailValidatorConstraits
     private String email;
 
     private String  cityId;

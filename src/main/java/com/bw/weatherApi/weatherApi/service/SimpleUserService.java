@@ -9,7 +9,8 @@ import java.util.List;
 
 @Service
 public interface SimpleUserService {
-    boolean addUserToPortalUser(SimpleUserDto simpleUserDto);
+    SimpleUser addUserToPortalUser(SimpleUserDto simpleUserDto);
+    SimpleUserDto toDto(SimpleUser simpleUser);
     boolean deleteUser(Long userId);
     List<SimpleUser> findAllSimpleUsers();
     List<SimpleUserDto> toDtos(List<SimpleUser> simpleUsers);

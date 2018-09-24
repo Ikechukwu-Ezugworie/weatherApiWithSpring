@@ -6,7 +6,7 @@ import com.bw.weatherApi.weatherApi.dto.AddCityRequestDto;
 import com.bw.weatherApi.weatherApi.dto.CityDto;
 import com.bw.weatherApi.weatherApi.models.City;
 import com.bw.weatherApi.weatherApi.service.CityService;
-import com.bw.weatherApi.weatherApi.urils.ApiResponse;
+import com.bw.weatherApi.weatherApi.dto.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

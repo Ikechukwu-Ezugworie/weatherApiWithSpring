@@ -41,7 +41,7 @@ public class ApxusWeatherChecker {
         WeatherResponseDto weatherResponseDto = null;
         for (SimpleUser simpleUser : simpleUsers) {
             try {
-                weatherResponseDto = cityService.fetchWeatherFromApi(simpleUser.getCity().getName());
+                weatherResponseDto = cityService.fetchWeatherFromApi(simpleUser.getCity().getName().replaceAll("\\s+",""));
                 builder.append(simpleUser.getFullName()).append("\n\n\n")
                         .append("The current weather condition in ")
                         .append(simpleUser.getCity().getName())
@@ -54,7 +54,7 @@ public class ApxusWeatherChecker {
 
                 if (Math.round(currentTemperature) < 20){
                     try {
-                        mailService.sendSimpleMail(simpleUser.getEmail(),"Current Weather in " + simpleUser.getCity().getName(),builder.toString());
+                       // mailService.sendSimpleMail(simpleUser.getEmail(),"Current Weather in " + simpleUser.getCity().getName(),builder.toString());
 
                     }catch (Exception ex){
                         ex.printStackTrace();

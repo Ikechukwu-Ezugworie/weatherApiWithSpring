@@ -1,9 +1,13 @@
 package com.bw.weatherApi.weatherApi.dto;
 
+import com.bw.weatherApi.validator.EmailValidation.EmailValidatorConstraits;
+import org.hibernate.validator.constraints.NotBlank;
+
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
 import java.sql.Timestamp;
 
 public class PortalUserDto {
@@ -11,14 +15,25 @@ public class PortalUserDto {
 
     private Long id;
 
+    @NotBlank
+    @NotNull
     private String username;
 
+    @NotBlank
+    @NotNull
     private String password;
 
+    @NotBlank
+    @NotNull
     private String firstName;
 
+    @NotBlank
+    @NotNull
     private String lastName;
 
+    @NotBlank
+    @NotNull
+    @EmailValidatorConstraits
     private String email;
 
     private String authKey;

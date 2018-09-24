@@ -25,6 +25,7 @@ import java.util.Optional;
 public class SimpleUserServiceImpl implements SimpleUserService {
 
     Logger logger = LoggerFactory.getLogger(SimpleUserServiceImpl.class);
+
     @Autowired
     AccessService accessService;
 
@@ -41,7 +42,7 @@ public class SimpleUserServiceImpl implements SimpleUserService {
 
     @Override
     @Transactional
-    public boolean addUserToPortalUser(SimpleUserDto simpleUserDto){
+    public SimpleUser addUserToPortalUser(SimpleUserDto simpleUserDto){
         PortalUser portalUser = accessService.getPrincipal();
 
         SimpleUser simpleUser = simpleUserDao.findByEmail(simpleUserDto.getEmail());
@@ -70,9 +71,21 @@ public class SimpleUserServiceImpl implements SimpleUserService {
         newSimpleUser.setEmail(simpleUserDto.getEmail());
         newSimpleUser.setFullName(simpleUserDto.getFullName());
 
-        simpleUserDao.save(newSimpleUser);
+        return simpleUserDao.save(newSimpleUser);
 
-        return true;
+    }
+
+    @Override
+    public SimpleUserDto toDto(SimpleUser simpleUser) {
+        SimpleUserDto simpleUserDto = new SimpleUserDto();
+        City city = cityDao.getOne(simpleUser.getCity().getId());
+        simpleUserDto.setCityId(String.valueOf(city.getId()));
+        simpleUserDto.setId(simpleUser.getId());
+        simpleUserDto.setEmail(simpleUser.getEmail());
+        simpleUserDto.setFullName(simpleUser.getFullName());
+        simpleUserDto.setCityId(String.valueOf(simpleUser.getId()));
+        simpleUserDto.setCityName(city.getName());
+        return simpleUserDto;
     }
 
     @Override

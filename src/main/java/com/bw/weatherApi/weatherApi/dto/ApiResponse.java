@@ -5,7 +5,7 @@
     organisation: Byteworks Technology solution
 
 **/
-package com.bw.weatherApi.weatherApi.urils;
+package com.bw.weatherApi.weatherApi.dto;
 
 public class ApiResponse<T> {
     public String code;
