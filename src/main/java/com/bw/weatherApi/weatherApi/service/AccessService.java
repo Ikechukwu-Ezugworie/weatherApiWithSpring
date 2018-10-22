@@ -20,4 +20,8 @@ public interface AccessService {
     PortalUser getPrincipal();
 
     PortalUserDto toDto(PortalUser portalUser);
+
+    void loadRoles();
+
+
 }

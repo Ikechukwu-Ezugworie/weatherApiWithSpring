@@ -1,6 +1,7 @@
 package com.bw.weatherApi.weatherApi.dto;
 
 import com.bw.weatherApi.validator.EmailValidation.EmailValidatorConstraits;
+import com.bw.weatherApi.weatherApi.models.Role;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.Column;
@@ -41,6 +42,8 @@ public class PortalUserDto {
     private String dateCreated;
 
     private  String dateUpdated;
+
+    private String roleName;
 
     public Long getId() {
         return id;
@@ -112,5 +115,13 @@ public class PortalUserDto {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
 }

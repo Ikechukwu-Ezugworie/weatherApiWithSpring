@@ -25,6 +25,9 @@ public class SignUpRequestDto {
     @NotBlank
     private String lastName;
 
+    @NotBlank
+    private String roleId;
+
     public SignUpRequestDto() {
     }
 
@@ -66,5 +69,13 @@ public class SignUpRequestDto {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(String roleId) {
+        this.roleId = roleId;
     }
 }

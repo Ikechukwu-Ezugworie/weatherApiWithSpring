@@ -39,12 +39,12 @@ public class PortalUser {
     @Column(nullable = false)
     private  Timestamp dateUpdated;
 
+
     @OneToOne(fetch = FetchType.LAZY)
     private City selectedSityToEmail;
 
-
-
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Role role;
 
 
 //   @JoinTable(name = "portalUser_city",
@@ -139,5 +139,19 @@ public class PortalUser {
         this.lastName = lastName;
     }
 
+    public City getSelectedSityToEmail() {
+        return selectedSityToEmail;
+    }
 
+    public void setSelectedSityToEmail(City selectedSityToEmail) {
+        this.selectedSityToEmail = selectedSityToEmail;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
 }
