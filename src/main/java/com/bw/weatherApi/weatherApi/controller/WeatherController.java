@@ -41,7 +41,6 @@ public class WeatherController extends BaseController {
     }
 
     @GetMapping("cities")
-    public ResponseEntity<?> getAllCities() {
         List<City> cities = cityService.getAllCities();
         List<CityDto> response = cityService.toListDto(cities);
         return ResponseEntity.ok(new ApiResponse<List<CityDto>>("200", "found cities", response));

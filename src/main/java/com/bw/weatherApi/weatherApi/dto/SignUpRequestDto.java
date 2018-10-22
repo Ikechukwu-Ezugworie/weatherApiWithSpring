@@ -28,6 +28,9 @@ public class SignUpRequestDto {
     @NotBlank
     private String roleId;
 
+    @NotBlank
+    private String portalAccountName;
+
     public SignUpRequestDto() {
     }
 
@@ -77,5 +80,13 @@ public class SignUpRequestDto {
 
     public void setRoleId(String roleId) {
         this.roleId = roleId;
+    }
+
+    public String getPortalAccountName() {
+        return portalAccountName;
+    }
+
+    public void setPortalAccountName(String portalAccountName) {
+        this.portalAccountName = portalAccountName;
     }
 }

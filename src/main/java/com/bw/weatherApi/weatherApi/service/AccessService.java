@@ -23,5 +23,7 @@ public interface AccessService {
 
     void loadRoles();
 
+    void createDefaultUser();
+
 
 }

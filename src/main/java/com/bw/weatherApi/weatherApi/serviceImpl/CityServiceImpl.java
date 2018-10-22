@@ -2,10 +2,9 @@
 
     Author: Oluwatobi Adenekan
     email:  tadenekan@byteworks.com.ng
-    organisation: Byteworks Technology solution
+    date:    25/09/2018
 
 **/
-
 package com.bw.weatherApi.weatherApi.serviceImpl;
 
 
@@ -17,13 +16,13 @@ import com.bw.weatherApi.weatherApi.dto.AddCityRequestDto;
 import com.bw.weatherApi.weatherApi.dto.CityDto;
 import com.bw.weatherApi.weatherApi.dto.WeatherResponseDto;
 import com.bw.weatherApi.weatherApi.models.City;
+import com.bw.weatherApi.weatherApi.models.PortalAccount;
 import com.bw.weatherApi.weatherApi.models.PortalUser;
 import com.bw.weatherApi.weatherApi.service.AccessService;
 import com.bw.weatherApi.weatherApi.service.CityService;
+import com.bw.weatherApi.weatherApi.service.PortalAccountService;
 import com.bw.weatherApi.weatherApi.utils.WeatherApiUtils;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import javassist.bytecode.stackmap.BasicBlock;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -37,12 +36,13 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.persistence.EntityManager;
+
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.net.MalformedURLException;
+
 import java.net.URI;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -61,6 +61,12 @@ public class CityServiceImpl implements CityService {
 
     @Autowired
     private Environment env;
+
+    @Autowired
+    private PortalAccountService portalAccountService;
+
+    @Autowired
+    EntityManager entityManager;
 
 
     Logger logger = LoggerFactory.getLogger(CityServiceImpl.class);
@@ -125,17 +131,17 @@ public class CityServiceImpl implements CityService {
     @Transactional
     public void cityUpdate(City city){
 
-        PortalUser portalUser = accessService.getPrincipal();
-        portalUser.getCities().add(city);
-        portalUserDao.save(portalUser);
+        PortalAccount portalAccount = portalAccountService.findbyPortalUser();
+        portalAccount.getCities().add(city);
+        entityManager.persist(portalAccount);
     }
 
 
     @Override
     public List<City> getAllUserCities(){
         List<Long> cityIds = new ArrayList<>();
-        PortalUser portalUser = accessService.getPrincipal();
-        Set<City> cities = portalUser.getCities();
+        PortalAccount portalAccount = portalAccountService.findbyPortalUser();
+        Set<City> cities = portalAccount.getCities();
         cities.forEach(city -> cityIds.add(city.getId()));
         return cityDao.findByIdInOrderByNameAsc(cityIds);
 
@@ -206,9 +212,9 @@ public class CityServiceImpl implements CityService {
     @Override
     @Transactional
     public void removeCities(){
-        PortalUser portalUser = accessService.getPrincipal();
-        portalUser.getCities().clear();
-        portalUserDao.save(portalUser);
+        PortalAccount portalAccount = portalAccountService.findbyPortalUser();
+        portalAccount.getCities().clear();
+        entityManager.persist(portalAccount);
     }
 
 
@@ -229,9 +235,9 @@ public class CityServiceImpl implements CityService {
         }
 
         City foundCity = cityChecker.get();
-        PortalUser portalUser =  accessService.getPrincipal();
-        portalUser.getCities().remove(foundCity);
-        portalUserDao.save(portalUser);
+        PortalAccount portalAccount = portalAccountService.findbyPortalUser();
+        portalAccount.getCities().remove(foundCity);
+        entityManager.persist(portalAccount);
         return true;
     }
 

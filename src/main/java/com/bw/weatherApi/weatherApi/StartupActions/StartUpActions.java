@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
-public class CityLoaderStartUpActions {
+public class StartUpActions {
 
-    Logger logger = LoggerFactory.getLogger(CityLoaderStartUpActions.class);
+    Logger logger = LoggerFactory.getLogger(StartUpActions.class);
 
     @Autowired
     CityService cityService;
@@ -26,7 +26,6 @@ public class CityLoaderStartUpActions {
         logger.info("application is starting up");
         cityService.loadCities();
         accessService.loadRoles();
-
-
+        accessService.createDefaultUser();
     }
 }

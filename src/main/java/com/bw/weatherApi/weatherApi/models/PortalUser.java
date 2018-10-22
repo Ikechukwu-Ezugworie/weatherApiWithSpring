@@ -47,14 +47,16 @@ public class PortalUser {
     private Role role;
 
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private PortalAccount portalAccount;
+
+
 //   @JoinTable(name = "portalUser_city",
 //   joinColumns = {@JoinColumn(name = "portalUserId")},
 //           inverseJoinColumns = {@JoinColumn(name = "city_id")}
 //   ) // to define the join tables
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @LazyCollection(value = LazyCollectionOption.TRUE )
-    private Set<City> cities = new HashSet<>();
+
     public PortalUser() {
     }
 
@@ -65,14 +67,6 @@ public class PortalUser {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Set<City> getCities() {
-        return cities;
-    }
-
-    public void setCities(Set<City> cities) {
-        this.cities = cities;
     }
 
     public String getUsername() {
@@ -153,5 +147,14 @@ public class PortalUser {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+
+    public PortalAccount getPortalAccount() {
+        return portalAccount;
+    }
+
+    public void setPortalAccount(PortalAccount portalAccount) {
+        this.portalAccount = portalAccount;
     }
 }
