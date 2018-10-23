@@ -32,7 +32,7 @@ public class ApxusWeatherChecker {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     private static final Logger log = LoggerFactory.getLogger(ApxusWeatherChecker.class);
 
-    @Scheduled(fixedDelay = 5000)
+    // @Scheduled(fixedDelay = 5000)
     public void checkForWeather() {
         log.info("About starting cron");
         StringBuilder builder = new StringBuilder();
