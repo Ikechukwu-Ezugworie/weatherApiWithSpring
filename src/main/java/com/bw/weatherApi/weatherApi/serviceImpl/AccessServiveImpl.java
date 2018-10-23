@@ -18,6 +18,7 @@ import com.bw.weatherApi.weatherApi.models.Role;
 import com.bw.weatherApi.weatherApi.service.AccessService;
 import com.bw.weatherApi.weatherApi.service.PortalAccountService;
 import com.bw.weatherApi.weatherApi.utils.WeatherApiUtils;
+import org.hibernate.validator.constraints.EAN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -171,5 +173,15 @@ public class AccessServiveImpl implements AccessService {
         portalUser.setDateCreated(Timestamp.from(Instant.now()));
         portalUser.setDateUpdated(Timestamp.from(Instant.now()));
         portalUserDao.save(portalUser);
+    }
+
+    public List<Role> getAllRoles(){
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Role> cq = cb.createQuery(Role.class);
+        Root<Role> root = cq.from(Role.class);
+        return (List<Role> ) entityManager.createQuery(cq.select(root));
+
+
     }
 }
