@@ -12,10 +12,13 @@ import com.bw.weatherApi.weatherApi.dao.PortalUserDao;
 import com.bw.weatherApi.weatherApi.dto.PortalUserDto;
 import com.bw.weatherApi.weatherApi.dto.RoleDto;
 import com.bw.weatherApi.weatherApi.dto.SignUpRequestDto;
+import com.bw.weatherApi.weatherApi.models.PortalAccount;
 import com.bw.weatherApi.weatherApi.models.PortalUser;
 import com.bw.weatherApi.weatherApi.models.Role;
 import com.bw.weatherApi.weatherApi.service.AccessService;
+import com.bw.weatherApi.weatherApi.service.PortalAccountService;
 import com.bw.weatherApi.weatherApi.utils.WeatherApiUtils;
+import org.hibernate.validator.constraints.EAN;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,7 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -50,6 +54,9 @@ public class AccessServiveImpl implements AccessService {
     @Autowired
     EntityManager entityManager;
 
+    @Autowired
+    PortalAccountService portalAccountService;
+
 
 
 
@@ -65,6 +72,9 @@ public class AccessServiveImpl implements AccessService {
         }
 
         Role role = entityManager.find(Role.class,Long.valueOf(signUpRequestDto.getRoleId()));
+
+        PortalAccount portalAccount = portalAccountService.findbyPortalUser();
+
         PortalUser portalUser = new PortalUser();
         portalUser.setUsername(signUpRequestDto.getUsername());
         portalUser.setPassword(bCryptPasswordEncoder.encode(signUpRequestDto.getPassword()));
@@ -72,6 +82,7 @@ public class AccessServiveImpl implements AccessService {
         portalUser.setFirstName(signUpRequestDto.getFirstName());
         portalUser.setLastName(signUpRequestDto.getLastName());
         portalUser.setRole(role);
+        portalUser.setPortalAccount(portalAccount);
         portalUser.setEmail(signUpRequestDto.getEmail());
         portalUser.setDateCreated(Timestamp.from(Instant.now()));
         portalUser.setDateUpdated(Timestamp.from(Instant.now()));
@@ -134,4 +145,43 @@ public class AccessServiveImpl implements AccessService {
 
     }
 
+
+    @Override
+    @Transactional
+    public void createDefaultUser(){
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Role> criteriaQuery = criteriaBuilder.createQuery(Role.class);
+        Root<Role> roleRoot = criteriaQuery.from(Role.class);
+        criteriaQuery.select(roleRoot).where(criteriaBuilder.equal(roleRoot.get("name"),"ADMIN"));
+        Role role = entityManager.createQuery(criteriaQuery).getResultList().get(0);
+
+        PortalAccount portalAccount = new PortalAccount();
+        portalAccount.setName("Byteworks Technology solutions");
+        entityManager.persist(portalAccount);
+
+
+        PortalUser portalUser = new PortalUser();
+        portalUser.setUsername("byteAdmin");
+        portalUser.setPassword(bCryptPasswordEncoder.encode("school123"));
+        portalUser.setAuthKey(String.valueOf(WeatherApiUtils.generateRandomInt(60)));
+        portalUser.setFirstName("byte");
+        portalUser.setLastName("admin");
+        portalUser.setRole(role);
+        portalUser.setPortalAccount(portalAccount);
+        portalUser.setEmail("admin@byteworks.com.ng");
+        portalUser.setDateCreated(Timestamp.from(Instant.now()));
+        portalUser.setDateUpdated(Timestamp.from(Instant.now()));
+        portalUserDao.save(portalUser);
+    }
+
+    public List<Role> getAllRoles(){
+
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Role> cq = cb.createQuery(Role.class);
+        Root<Role> root = cq.from(Role.class);
+        return (List<Role> ) entityManager.createQuery(cq.select(root));
+
+
+    }
 }

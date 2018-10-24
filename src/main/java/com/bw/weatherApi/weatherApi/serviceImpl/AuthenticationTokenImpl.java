@@ -111,7 +111,9 @@ public class AuthenticationTokenImpl implements AuthenticationTokenService {
         // Get token from the response header
 
         Cookie[] cookies = request.getCookies();
+
         List<Cookie> cookieList = Arrays.asList(cookies);
+
         for (Cookie cookie : cookieList) {
             String cookieName = cookie.getName();
             if (cookieName.equalsIgnoreCase(HEADER_STRING)) {

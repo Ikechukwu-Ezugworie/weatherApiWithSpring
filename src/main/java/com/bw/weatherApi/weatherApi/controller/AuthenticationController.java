@@ -12,16 +12,16 @@ import com.bw.weatherApi.weatherApi.dao.PortalUserDao;
 import com.bw.weatherApi.weatherApi.dto.PortalUserDto;
 import com.bw.weatherApi.weatherApi.dto.SignUpRequestDto;
 import com.bw.weatherApi.weatherApi.models.PortalUser;
+import com.bw.weatherApi.weatherApi.models.Role;
 import com.bw.weatherApi.weatherApi.service.AccessService;
 import com.bw.weatherApi.weatherApi.dto.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -48,7 +48,19 @@ public class AuthenticationController /*extends BaseController*/ {
             return ResponseEntity.ok(new ApiResponse<>("409", ex.getMessage(), null));
         }
 
+    }
 
+    @GetMapping("roles")
+    public ResponseEntity<?> signUp(){
+
+        try{
+            List<Role> roles = accessService.getAllRoles();
+
+            return ResponseEntity.ok(new ApiResponse<List<Role>>("200", "successfully created new user", roles));
+        }catch (CustomException ex){
+            ex.printStackTrace();
+            return ResponseEntity.ok(new ApiResponse<>("409", ex.getMessage(), null));
+        }
 
     }
 }
