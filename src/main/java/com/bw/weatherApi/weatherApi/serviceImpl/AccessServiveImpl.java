@@ -183,7 +183,7 @@ public class AccessServiveImpl implements AccessService {
         portalUser.setEmail("admin@byteworks.com.ng");
         portalUser.setDateCreated(Timestamp.from(Instant.now()));
         portalUser.setDateUpdated(Timestamp.from(Instant.now()));
-        portalUserDao.save(portalUser);
+        entityManager.persist(portalUser);
 
 
         String[] defaultCities = {"New York (NY), USA","Abuja, Nigeria","Lagos, Nigeria","LONDON, UK","KIEV, Ukraine"};
@@ -191,7 +191,10 @@ public class AccessServiveImpl implements AccessService {
                 .stream()
                 .map(cityDao::findByName)
                 .forEach(optionalCity -> {
-                    optionalCity.ifPresent(cityService::cityUpdate});
+                    optionalCity.ifPresent( foundCity -> {
+                        portalAccount.getCities().add(foundCity);
+                        entityManager.persist(portalAccount);
+                    });});
 
     }
 
@@ -204,4 +207,6 @@ public class AccessServiveImpl implements AccessService {
 
 
     }
+
+
 }
