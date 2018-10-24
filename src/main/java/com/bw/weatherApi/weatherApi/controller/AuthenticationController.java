@@ -51,7 +51,7 @@ public class AuthenticationController /*extends BaseController*/ {
     }
 
     @GetMapping("roles")
-    public ResponseEntity<?> signUp(){
+    public ResponseEntity<?> getRoles(){
 
         try{
             List<Role> roles = accessService.getAllRoles();
