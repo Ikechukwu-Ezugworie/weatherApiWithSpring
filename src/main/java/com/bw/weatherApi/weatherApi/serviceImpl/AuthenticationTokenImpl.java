@@ -112,10 +112,6 @@ public class AuthenticationTokenImpl implements AuthenticationTokenService {
 
         Cookie[] cookies = request.getCookies();
 
-        if(cookies == null){
-            return null;
-
-        }
         List<Cookie> cookieList = Arrays.asList(cookies);
 
         for (Cookie cookie : cookieList) {
