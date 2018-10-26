@@ -8,10 +8,12 @@
 package com.bw.weatherApi.weatherApi.dto;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.springframework.format.annotation.NumberFormat;
 
 import javax.validation.constraints.NotNull;
 
 public class SignUpRequestDto {
+
     @NotBlank
     private String  username;
 
@@ -29,7 +31,8 @@ public class SignUpRequestDto {
 
     @NotBlank
     @NotNull
-    private String roleId;
+    @NumberFormat
+    private Long roleId;
 
     @NotBlank
     private String portalAccountName;

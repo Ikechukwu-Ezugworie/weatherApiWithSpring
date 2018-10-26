@@ -8,6 +8,7 @@
 package com.bw.weatherApi.weatherApi.serviceImpl;
 
 import com.bw.weatherApi.weatherApi.Exceptions.CustomException;
+import com.bw.weatherApi.weatherApi.dao.CityDao;
 import com.bw.weatherApi.weatherApi.dao.PortalUserDao;
 import com.bw.weatherApi.weatherApi.dto.PortalUserDto;
 import com.bw.weatherApi.weatherApi.dto.RoleDto;
@@ -73,7 +74,11 @@ public class AccessServiveImpl implements AccessService {
             throw new CustomException("user with username already exist", HttpStatus.CONFLICT);
         }
 
-        Role role = entityManager.find(Role.class,Long.valueOf(signUpRequestDto.getRoleId()));
+        Role role = entityManager.find(Role.class,signUpRequestDto.getRoleId());
+
+        if(role == null){
+            throw new CustomException("Role with that id does not exist", HttpStatus.CONFLICT);
+        }
 
         try{
             portalAccount = portalAccountService.findbyPortalUser();
@@ -120,6 +125,7 @@ public class AccessServiveImpl implements AccessService {
         portalUserDto.setLastName(portalUser.getLastName());
         portalUserDto.setPassword(portalUser.getPassword());
         portalUserDto.setAuthKey(portalUser.getAuthKey());
+
         if(portalUser.getRole() != null){ // This will cater for the updated table
             Role role = entityManager.find(Role.class,portalUser.getRole().getId());
             portalUserDto.setRoleName(role.getName());
