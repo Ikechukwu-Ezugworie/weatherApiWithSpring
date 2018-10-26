@@ -7,6 +7,7 @@
 **/
 package com.bw.weatherApi.weatherApi.dto;
 
+import com.bw.weatherApi.validator.numberValidator.EnsureNumber;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.NumberFormat;
 
@@ -31,7 +32,7 @@ public class SignUpRequestDto {
 
     @NotBlank
     @NotNull
-    @NumberFormat
+   @EnsureNumber(message = "Enter a valid role id")
     private Long roleId;
 
     @NotBlank
@@ -80,12 +81,13 @@ public class SignUpRequestDto {
         this.lastName = lastName;
     }
 
-    public String getRoleId() {
+    public Long getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(String roleId) {
+    public SignUpRequestDto setRoleId(Long roleId) {
         this.roleId = roleId;
+        return this;
     }
 
     public String getPortalAccountName() {
