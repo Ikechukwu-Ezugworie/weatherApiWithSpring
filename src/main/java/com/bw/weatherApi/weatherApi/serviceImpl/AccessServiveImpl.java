@@ -148,8 +148,22 @@ public class AccessServiveImpl implements AccessService {
 
     @Override
     @Transactional
-    public void createDefaultUser(){
+    public void createDefaultUser( ) {
 
+        String defaultUserName = "byteweatherAdmin";
+        String defaultPassword = "school123";
+
+        Optional<PortalUser> checker = portalUserDao.findByUsername(defaultUserName);
+
+        if (!checker.isPresent()) {
+            defaultUserCreator(defaultUserName, defaultPassword);
+        }
+
+    }
+
+
+    
+    private void defaultUserCreator(String defaultUserName, String defaultPassword) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Role> criteriaQuery = criteriaBuilder.createQuery(Role.class);
         Root<Role> roleRoot = criteriaQuery.from(Role.class);
@@ -162,8 +176,8 @@ public class AccessServiveImpl implements AccessService {
 
 
         PortalUser portalUser = new PortalUser();
-        portalUser.setUsername("byteAdmin");
-        portalUser.setPassword(bCryptPasswordEncoder.encode("school123"));
+        portalUser.setUsername(defaultUserName);
+        portalUser.setPassword(bCryptPasswordEncoder.encode(defaultPassword));
         portalUser.setAuthKey(String.valueOf(WeatherApiUtils.generateRandomInt(60)));
         portalUser.setFirstName("byte");
         portalUser.setLastName("admin");
@@ -180,7 +194,7 @@ public class AccessServiveImpl implements AccessService {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Role> cq = cb.createQuery(Role.class);
         Root<Role> root = cq.from(Role.class);
-        return (List<Role> ) entityManager.createQuery(cq.select(root));
+        return (List<Role> ) entityManager.createQuery(cq.select(root)).getResultList();
 
 
     }

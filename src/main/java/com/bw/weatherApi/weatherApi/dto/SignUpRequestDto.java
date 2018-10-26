@@ -9,6 +9,8 @@ package com.bw.weatherApi.weatherApi.dto;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotNull;
+
 public class SignUpRequestDto {
     @NotBlank
     private String  username;
@@ -26,6 +28,7 @@ public class SignUpRequestDto {
     private String lastName;
 
     @NotBlank
+    @NotNull
     private String roleId;
 
     @NotBlank
