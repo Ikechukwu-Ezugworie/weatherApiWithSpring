@@ -32,11 +32,11 @@ public class ApxusWeatherChecker {
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     private static final Logger log = LoggerFactory.getLogger(ApxusWeatherChecker.class);
 
-    //@Scheduled(fixedDelay = 5000)
+    // @Scheduled(fixedDelay = 5000)
     public void checkForWeather() {
         log.info("About starting cron");
         StringBuilder builder = new StringBuilder();
-        builder.append("Hello,");
+        builder.append("Hello ");
         List<SimpleUser> simpleUsers = simpleUserDao.findAll();
         WeatherResponseDto weatherResponseDto = null;
         for (SimpleUser simpleUser : simpleUsers) {
@@ -47,6 +47,8 @@ public class ApxusWeatherChecker {
                         .append(simpleUser.getCity().getName())
                         .append(" is ")
                         .append(weatherResponseDto.getCurrent().getTemp_c().toUpperCase())
+                        .append("\u00b0")
+                        .append("C")
                         .append("\n\n\n")
                         .append("Best Regards\n").append("From your friends at Byte weather");
 
@@ -54,7 +56,7 @@ public class ApxusWeatherChecker {
 
                 if (Math.round(currentTemperature) < 20){
                     try {
-                       //mailService.sendSimpleMail(simpleUser.getEmail(),"Current Weather in " + simpleUser.getCity().getName(),builder.toString());
+                        mailService.sendSimpleMail(simpleUser.getEmail(),"Current Weather in " + simpleUser.getCity().getName(),builder.toString());
 
                     }catch (Exception ex){
                         ex.printStackTrace();

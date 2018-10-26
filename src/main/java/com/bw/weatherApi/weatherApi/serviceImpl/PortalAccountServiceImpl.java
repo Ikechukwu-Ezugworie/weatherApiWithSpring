@@ -29,18 +29,18 @@ public class PortalAccountServiceImpl implements PortalAccountService {
 
     public PortalAccount findbyPortalUser(){
 //        entityManager.createQuery("select p from  PortalUser p where p.username = :name", PortalUser.class).setParameter("name","tobi");
-       return accessService.getPrincipal().getPortalAccount();
-//        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-//        CriteriaQuery<PortalAccount> cq = criteriaBuilder.createQuery(PortalAccount.class);
-//        Root<PortalAccount> portalAccountRoot = cq.from(PortalAccount.class);
-//        cq.select(portalAccountRoot).where(criteriaBuilder.equal(portalAccountRoot.get("portalUser"),portalUser));
-//        List<PortalAccount> portalAccounts = entityManager.createQuery(cq).getResultList();
-//        if(portalAccounts.isEmpty()){
-//            return null;
-//        }
-//
-//
-//        return entityManager.find(PortalAccount.class,portalUser.getPortalAccount().getId());
+        PortalUser portalUser = accessService.getPrincipal();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<PortalAccount> cq = criteriaBuilder.createQuery(PortalAccount.class);
+        Root<PortalAccount> portalAccountRoot = cq.from(PortalAccount.class);
+        cq.select(portalAccountRoot).where(criteriaBuilder.equal(portalAccountRoot.get("portalUser"),portalUser));
+        List<PortalAccount> portalAccounts = entityManager.createQuery(cq).getResultList();
+        if(portalAccounts.isEmpty()){
+            return null;
+        }
+
+
+        return entityManager.find(PortalAccount.class,portalUser.getPortalAccount().getId());
 
     }
 

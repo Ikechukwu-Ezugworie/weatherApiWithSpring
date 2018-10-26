@@ -8,14 +8,18 @@
 package com.bw.weatherApi.weatherApi.serviceImpl;
 
 import com.bw.weatherApi.weatherApi.Exceptions.CustomException;
+import com.bw.weatherApi.weatherApi.dao.CityDao;
 import com.bw.weatherApi.weatherApi.dao.PortalUserDao;
+import com.bw.weatherApi.weatherApi.dto.CityDto;
 import com.bw.weatherApi.weatherApi.dto.PortalUserDto;
 import com.bw.weatherApi.weatherApi.dto.RoleDto;
 import com.bw.weatherApi.weatherApi.dto.SignUpRequestDto;
+import com.bw.weatherApi.weatherApi.models.City;
 import com.bw.weatherApi.weatherApi.models.PortalAccount;
 import com.bw.weatherApi.weatherApi.models.PortalUser;
 import com.bw.weatherApi.weatherApi.models.Role;
 import com.bw.weatherApi.weatherApi.service.AccessService;
+import com.bw.weatherApi.weatherApi.service.CityService;
 import com.bw.weatherApi.weatherApi.service.PortalAccountService;
 import com.bw.weatherApi.weatherApi.utils.WeatherApiUtils;
 import org.hibernate.validator.constraints.EAN;
@@ -37,6 +41,7 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,6 +61,12 @@ public class AccessServiveImpl implements AccessService {
 
     @Autowired
     PortalAccountService portalAccountService;
+
+    @Autowired
+    CityService cityService;
+
+    @Autowired
+    CityDao cityDao;
 
 
 
@@ -148,22 +159,8 @@ public class AccessServiveImpl implements AccessService {
 
     @Override
     @Transactional
-    public void createDefaultUser( ) {
+    public void createDefaultUser(){
 
-        String defaultUserName = "byteweatherAdmin";
-        String defaultPassword = "school123";
-
-        Optional<PortalUser> checker = portalUserDao.findByUsername(defaultUserName);
-
-        if (!checker.isPresent()) {
-            defaultUserCreator(defaultUserName, defaultPassword);
-        }
-
-    }
-
-
-    
-    private void defaultUserCreator(String defaultUserName, String defaultPassword) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Role> criteriaQuery = criteriaBuilder.createQuery(Role.class);
         Root<Role> roleRoot = criteriaQuery.from(Role.class);
@@ -176,8 +173,8 @@ public class AccessServiveImpl implements AccessService {
 
 
         PortalUser portalUser = new PortalUser();
-        portalUser.setUsername(defaultUserName);
-        portalUser.setPassword(bCryptPasswordEncoder.encode(defaultPassword));
+        portalUser.setUsername("byteAdmin");
+        portalUser.setPassword(bCryptPasswordEncoder.encode("school123"));
         portalUser.setAuthKey(String.valueOf(WeatherApiUtils.generateRandomInt(60)));
         portalUser.setFirstName("byte");
         portalUser.setLastName("admin");
@@ -186,7 +183,19 @@ public class AccessServiveImpl implements AccessService {
         portalUser.setEmail("admin@byteworks.com.ng");
         portalUser.setDateCreated(Timestamp.from(Instant.now()));
         portalUser.setDateUpdated(Timestamp.from(Instant.now()));
-        portalUserDao.save(portalUser);
+        entityManager.persist(portalUser);
+
+
+        String[] defaultCities = {"New York (NY), USA","Abuja, Nigeria","Lagos, Nigeria","LONDON, UK","KIEV, Ukraine"};
+        Arrays.asList(defaultCities)
+                .stream()
+                .map(cityDao::findByName)
+                .forEach(optionalCity -> {
+                    optionalCity.ifPresent( foundCity -> {
+                        portalAccount.getCities().add(foundCity);
+                        entityManager.persist(portalAccount);
+                    });});
+
     }
 
     public List<Role> getAllRoles(){
@@ -194,8 +203,10 @@ public class AccessServiveImpl implements AccessService {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Role> cq = cb.createQuery(Role.class);
         Root<Role> root = cq.from(Role.class);
-        return (List<Role> ) entityManager.createQuery(cq.select(root)).getResultList();
+        return  entityManager.createQuery(cq.select(root)).getResultList();
 
 
     }
+
+
 }
