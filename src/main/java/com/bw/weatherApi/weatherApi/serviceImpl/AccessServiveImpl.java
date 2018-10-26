@@ -57,7 +57,8 @@ public class AccessServiveImpl implements AccessService {
     @Autowired
     PortalAccountService portalAccountService;
 
-
+    @Autowired
+    CityDao cityDao;
 
 
 
@@ -66,6 +67,7 @@ public class AccessServiveImpl implements AccessService {
     public PortalUser save(SignUpRequestDto signUpRequestDto) {
 
         Optional<PortalUser> checker =  portalUserDao.findByUsername(signUpRequestDto.getUsername());
+        PortalAccount portalAccount = null;
         if (checker.isPresent()){
             logger.info("SimpleUser already exists");
             throw new CustomException("user with username already exist", HttpStatus.CONFLICT);
@@ -73,7 +75,12 @@ public class AccessServiveImpl implements AccessService {
 
         Role role = entityManager.find(Role.class,Long.valueOf(signUpRequestDto.getRoleId()));
 
-        PortalAccount portalAccount = portalAccountService.findbyPortalUser();
+        try{
+            portalAccount = portalAccountService.findbyPortalUser();
+        }catch (Exception ex){
+            ex.printStackTrace();
+            throw new CustomException("You can only sign in to create a default user", HttpStatus.CONFLICT);
+        }
 
         PortalUser portalUser = new PortalUser();
         portalUser.setUsername(signUpRequestDto.getUsername());
@@ -86,7 +93,8 @@ public class AccessServiveImpl implements AccessService {
         portalUser.setEmail(signUpRequestDto.getEmail());
         portalUser.setDateCreated(Timestamp.from(Instant.now()));
         portalUser.setDateUpdated(Timestamp.from(Instant.now()));
-        return portalUserDao.save(portalUser);
+         entityManager.persist(portalUser);
+         return portalUser;
     }
 
     @Override
