@@ -10,16 +10,13 @@ package com.bw.weatherApi.weatherApi.serviceImpl;
 import com.bw.weatherApi.weatherApi.Exceptions.CustomException;
 import com.bw.weatherApi.weatherApi.dao.CityDao;
 import com.bw.weatherApi.weatherApi.dao.PortalUserDao;
-import com.bw.weatherApi.weatherApi.dto.CityDto;
 import com.bw.weatherApi.weatherApi.dto.PortalUserDto;
 import com.bw.weatherApi.weatherApi.dto.RoleDto;
 import com.bw.weatherApi.weatherApi.dto.SignUpRequestDto;
-import com.bw.weatherApi.weatherApi.models.City;
 import com.bw.weatherApi.weatherApi.models.PortalAccount;
 import com.bw.weatherApi.weatherApi.models.PortalUser;
 import com.bw.weatherApi.weatherApi.models.Role;
 import com.bw.weatherApi.weatherApi.service.AccessService;
-import com.bw.weatherApi.weatherApi.service.CityService;
 import com.bw.weatherApi.weatherApi.service.PortalAccountService;
 import com.bw.weatherApi.weatherApi.utils.WeatherApiUtils;
 import org.hibernate.validator.constraints.EAN;
@@ -63,9 +60,6 @@ public class AccessServiveImpl implements AccessService {
     PortalAccountService portalAccountService;
 
     @Autowired
-    CityService cityService;
-
-    @Autowired
     CityDao cityDao;
 
 
@@ -77,6 +71,7 @@ public class AccessServiveImpl implements AccessService {
     public PortalUser save(SignUpRequestDto signUpRequestDto) {
 
         Optional<PortalUser> checker =  portalUserDao.findByUsername(signUpRequestDto.getUsername());
+        PortalAccount portalAccount = null;
         if (checker.isPresent()){
             logger.info("SimpleUser already exists");
             throw new CustomException("user with username already exist", HttpStatus.CONFLICT);
@@ -84,7 +79,12 @@ public class AccessServiveImpl implements AccessService {
 
         Role role = entityManager.find(Role.class,Long.valueOf(signUpRequestDto.getRoleId()));
 
-        PortalAccount portalAccount = portalAccountService.findbyPortalUser();
+        try{
+            portalAccount = portalAccountService.findbyPortalUser();
+        }catch (Exception ex){
+            ex.printStackTrace();
+            throw new CustomException("You can only sign in to create a default user", HttpStatus.CONFLICT);
+        }
 
         PortalUser portalUser = new PortalUser();
         portalUser.setUsername(signUpRequestDto.getUsername());
@@ -97,7 +97,8 @@ public class AccessServiveImpl implements AccessService {
         portalUser.setEmail(signUpRequestDto.getEmail());
         portalUser.setDateCreated(Timestamp.from(Instant.now()));
         portalUser.setDateUpdated(Timestamp.from(Instant.now()));
-        return portalUserDao.save(portalUser);
+         entityManager.persist(portalUser);
+         return portalUser;
     }
 
     @Override
@@ -159,8 +160,22 @@ public class AccessServiveImpl implements AccessService {
 
     @Override
     @Transactional
-    public void createDefaultUser(){
+    public void createDefaultUser( ) {
 
+        String defaultUserName = "byteweatherAdmin";
+        String defaultPassword = "school123";
+
+        Optional<PortalUser> checker = portalUserDao.findByUsername(defaultUserName);
+
+        if (!checker.isPresent()) {
+            defaultUserCreator(defaultUserName, defaultPassword);
+        }
+
+    }
+
+
+    
+    private void defaultUserCreator(String defaultUserName, String defaultPassword) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Role> criteriaQuery = criteriaBuilder.createQuery(Role.class);
         Root<Role> roleRoot = criteriaQuery.from(Role.class);
@@ -173,8 +188,8 @@ public class AccessServiveImpl implements AccessService {
 
 
         PortalUser portalUser = new PortalUser();
-        portalUser.setUsername("byteAdmin");
-        portalUser.setPassword(bCryptPasswordEncoder.encode("school123"));
+        portalUser.setUsername(defaultUserName);
+        portalUser.setPassword(bCryptPasswordEncoder.encode(defaultPassword));
         portalUser.setAuthKey(String.valueOf(WeatherApiUtils.generateRandomInt(60)));
         portalUser.setFirstName("byte");
         portalUser.setLastName("admin");
@@ -203,7 +218,7 @@ public class AccessServiveImpl implements AccessService {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Role> cq = cb.createQuery(Role.class);
         Root<Role> root = cq.from(Role.class);
-        return  entityManager.createQuery(cq.select(root)).getResultList();
+        return (List<Role> ) entityManager.createQuery(cq.select(root)).getResultList();
 
 
     }
