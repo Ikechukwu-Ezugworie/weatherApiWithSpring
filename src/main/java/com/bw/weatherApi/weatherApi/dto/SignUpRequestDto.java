@@ -9,6 +9,8 @@ package com.bw.weatherApi.weatherApi.dto;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.NotNull;
+
 public class SignUpRequestDto {
     @NotBlank
     private String  username;
@@ -26,7 +28,11 @@ public class SignUpRequestDto {
     private String lastName;
 
     @NotBlank
+    @NotNull
     private String roleId;
+
+    @NotBlank
+    private String portalAccountName;
 
     public SignUpRequestDto() {
     }
@@ -77,5 +83,13 @@ public class SignUpRequestDto {
 
     public void setRoleId(String roleId) {
         this.roleId = roleId;
+    }
+
+    public String getPortalAccountName() {
+        return portalAccountName;
+    }
+
+    public void setPortalAccountName(String portalAccountName) {
+        this.portalAccountName = portalAccountName;
     }
 }

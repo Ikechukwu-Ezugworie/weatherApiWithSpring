@@ -48,7 +48,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and().csrf().disable() //disapble cors and csrf
                 .authorizeRequests()
                 .antMatchers("/api/v1/signup").permitAll() // permit to hit signup
-//                .antMatchers("/api/v1/admin").hasRole("Admin").
+//               .antMatchers("/api/v1/admin").hasRole("Admin").
+                .antMatchers("/api/v1/roles").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(jwtAuthenticationFilter())

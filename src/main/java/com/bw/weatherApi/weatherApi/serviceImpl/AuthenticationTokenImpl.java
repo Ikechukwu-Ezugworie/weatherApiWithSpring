@@ -117,6 +117,7 @@ public class AuthenticationTokenImpl implements AuthenticationTokenService {
 
         }
         List<Cookie> cookieList = Arrays.asList(cookies);
+
         for (Cookie cookie : cookieList) {
             String cookieName = cookie.getName();
             if (cookieName.equalsIgnoreCase(HEADER_STRING)) {
