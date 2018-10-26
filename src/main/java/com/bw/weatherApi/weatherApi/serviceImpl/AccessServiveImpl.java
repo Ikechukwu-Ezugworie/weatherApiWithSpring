@@ -8,7 +8,6 @@
 package com.bw.weatherApi.weatherApi.serviceImpl;
 
 import com.bw.weatherApi.weatherApi.Exceptions.CustomException;
-import com.bw.weatherApi.weatherApi.dao.CityDao;
 import com.bw.weatherApi.weatherApi.dao.PortalUserDao;
 import com.bw.weatherApi.weatherApi.dto.PortalUserDto;
 import com.bw.weatherApi.weatherApi.dto.RoleDto;
@@ -38,7 +37,6 @@ import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,8 +59,6 @@ public class AccessServiveImpl implements AccessService {
 
     @Autowired
     CityDao cityDao;
-
-
 
 
 
@@ -198,19 +194,7 @@ public class AccessServiveImpl implements AccessService {
         portalUser.setEmail("admin@byteworks.com.ng");
         portalUser.setDateCreated(Timestamp.from(Instant.now()));
         portalUser.setDateUpdated(Timestamp.from(Instant.now()));
-        entityManager.persist(portalUser);
-
-
-        String[] defaultCities = {"New York (NY), USA","Abuja, Nigeria","Lagos, Nigeria","LONDON, UK","KIEV, Ukraine"};
-        Arrays.asList(defaultCities)
-                .stream()
-                .map(cityDao::findByName)
-                .forEach(optionalCity -> {
-                    optionalCity.ifPresent( foundCity -> {
-                        portalAccount.getCities().add(foundCity);
-                        entityManager.persist(portalAccount);
-                    });});
-
+        portalUserDao.save(portalUser);
     }
 
     public List<Role> getAllRoles(){
@@ -222,6 +206,4 @@ public class AccessServiveImpl implements AccessService {
 
 
     }
-
-
 }
